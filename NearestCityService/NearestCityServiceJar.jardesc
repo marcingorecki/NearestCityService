@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="MacRoman" standalone="no"?>
+<jardesc>
+    <jar path="Nearest City/libs/NearestCityService.jar"/>
+    <options buildIfNeeded="true" compress="true" descriptionLocation="/NearestCityService/NearestCityServiceJar.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="true" overwrite="false" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
+    <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
+    <selectedProjects/>
+    <manifest generateManifest="true" manifestLocation="/NearestCityService/MANIFEST.MF" manifestVersion="1.0" reuseManifest="false" saveManifest="true" usesManifest="true">
+        <sealing sealJar="false">
+            <packagesToSeal/>
+            <packagesToUnSeal/>
+        </sealing>
+    </manifest>
+    <selectedElements exportClassFiles="true" exportJavaFiles="true" exportOutputFolder="false">
+        <javaElement handleIdentifier="=NearestCityService/src"/>
+        <folder path="/NearestCityService/data"/>
+        <file path="/NearestCityService/.project"/>
+        <file path="/NearestCityService/.classpath"/>
+    </selectedElements>
+</jardesc>
