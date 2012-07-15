@@ -8,22 +8,22 @@ public class DataSource {
 
 	static List<GeoPoint> points = null;
 	static DataSource dataSource = null;
-	
-	private DataSource(){
-		USCensusCSVFileReader reader = new USCensusCSVFileReader();
+
+	private DataSource() {
+		DataSourceProvider reader = new USCensusTranslatedCSVFileReader();
 		points = reader.read();
 	};
-	
+
 	public static DataSource getInstance() {
-		if(dataSource == null){
+		if (dataSource == null) {
 			dataSource = new DataSource();
 		}
-		
+
 		return dataSource;
 	}
-	
-	public List<GeoPoint> getData(){
-		
+
+	public List<GeoPoint> getData() {
+
 		return points;
 	}
 }

@@ -19,9 +19,9 @@ import net.mgorecki.nearestcity.GeoPoint;
  * @author marcin
  * 
  */
-public class USCensusCSVFileReader implements DataSourceProvider {
+public class USCensusTranslatedCSVFileReader implements DataSourceProvider {
 
-	private static final String CENSUS_FILENAME = "/Gaz_places_national.csv";
+	private static final String CENSUS_FILENAME = "/uscities_census2010.txt";
 	private Logger logger = Logger.getLogger(getClass().getCanonicalName());
 
 	private List<GeoPoint> readCSVFile(InputStream csvStream) throws IOException {
@@ -32,10 +32,7 @@ public class USCensusCSVFileReader implements DataSourceProvider {
 		while ((line = br.readLine()) != null) {
 			if (!firstline) {
 				GeoPoint point = csvToPoint(line);
-				// skip http://en.wikipedia.org/wiki/Census-designated_place
-				if (!point.getName().endsWith("CDP")) {
-					list.add(point);
-				}
+				list.add(point);
 			} else {
 				firstline = false;
 			}
@@ -50,14 +47,20 @@ public class USCensusCSVFileReader implements DataSourceProvider {
 		String[] data = line.split("\t");
 
 		point.setCountry("USA");
-		point.setName(data[3]);
+		point.setName(data[1]);
 		point.setState(data[0]);
-		point.setLatitude(Float.parseFloat(data[8]));
-		point.setLongitude(Float.parseFloat(data[9]));
+		point.setLatitude(Float.parseFloat(data[3]));
+		point.setLongitude(Float.parseFloat(data[2]));
 
 		return point;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see net.mgorecki.nearestcity.datasource.DataSourceProvider#read()
+	 */
+	@Override
 	public List<GeoPoint> read() {
 		InputStream csvStream = getClass().getResourceAsStream(CENSUS_FILENAME);
 		List<GeoPoint> list;
