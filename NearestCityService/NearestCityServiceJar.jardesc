@@ -12,7 +12,7 @@
     </manifest>
     <selectedElements exportClassFiles="true" exportJavaFiles="true" exportOutputFolder="false">
         <javaElement handleIdentifier="=NearestCityService/src"/>
-        <folder path="/NearestCityService/data"/>
+        <javaElement handleIdentifier="=NearestCityService/data"/>
         <file path="/NearestCityService/.project"/>
         <file path="/NearestCityService/.classpath"/>
     </selectedElements>

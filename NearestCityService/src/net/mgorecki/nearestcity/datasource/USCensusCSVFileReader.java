@@ -1,13 +1,12 @@
 package net.mgorecki.nearestcity.datasource;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Logger;
 
 import net.mgorecki.nearestcity.GeoPoint;
 
@@ -22,22 +21,12 @@ import net.mgorecki.nearestcity.GeoPoint;
  */
 public class USCensusCSVFileReader {
 
-	private List<File> findAllCSVFiles() {
-		File dataDir = new File("data");
-		File[] csvFiles = dataDir.listFiles(new FilenameFilter() {
+	private static final String CENSUS_FILENAME = "/Gaz_places_national.csv";
+	private Logger logger = Logger.getLogger(getClass().getCanonicalName());
 
-			@Override
-			public boolean accept(File dir, String name) {
-				return name.endsWith(".csv");
-			}
-		});
-
-		return Arrays.asList(csvFiles);
-	}
-
-	private List<GeoPoint> readCSVFile(File csvFile) throws IOException {
+	private List<GeoPoint> readCSVFile(InputStream csvStream) throws IOException {
 		List<GeoPoint> list = new ArrayList<GeoPoint>();
-		BufferedReader br = new BufferedReader(new FileReader(csvFile));
+		BufferedReader br = new BufferedReader(new InputStreamReader(csvStream), 8192);
 		String line;
 		boolean firstline = true;
 		while ((line = br.readLine()) != null) {
@@ -70,16 +59,14 @@ public class USCensusCSVFileReader {
 	}
 
 	public List<GeoPoint> read() {
-		List<GeoPoint> list = new ArrayList<GeoPoint>();
-
-		for (File csvFile : findAllCSVFiles()) {
-			try {
-				list.addAll(readCSVFile(csvFile));
-			} catch (IOException e) {
-				// broken file, skip it
-			}
+		InputStream csvStream = getClass().getResourceAsStream(CENSUS_FILENAME);
+		List<GeoPoint> list;
+		try {
+			list = readCSVFile(csvStream);
+		} catch (IOException e) {
+			logger.severe("Error reading " + CENSUS_FILENAME + " file: " + e.getLocalizedMessage());
+			list = new ArrayList<GeoPoint>();
 		}
-
 		return list;
 	}
 
