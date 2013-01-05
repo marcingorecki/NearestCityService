@@ -4,7 +4,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StreamTokenizer;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -41,6 +44,51 @@ public class USCensusTranslatedCSVFileReader implements DataSourceProvider {
 		return list;
 	}
 
+	private List<GeoPoint> readCSVUsingStreamTokenizer(InputStream csvStream) throws IOException {
+		List<GeoPoint> list = new ArrayList<GeoPoint>();
+		Reader r = new BufferedReader(new InputStreamReader(csvStream));
+		StreamTokenizer st = new StreamTokenizer(r);
+		st.wordChars(32, 255);
+		st.whitespaceChars('\t', '\t');
+		st.eolIsSignificant(true);
+		int field = 0;
+
+		GeoPoint point = new GeoPoint();
+
+		boolean firstline = true;
+		while (st.nextToken() != StreamTokenizer.TT_EOF) {
+			if (st.ttype == StreamTokenizer.TT_EOL) {
+
+				if (!firstline) {
+					list.add(point);
+				} else {
+					firstline = false;
+				}
+				point = new GeoPoint();
+				continue;
+			}
+			field++;
+
+			switch (field) {
+			case 1:
+				point.setState(st.sval);
+				break;
+			case 2:
+				point.setName(st.sval);
+				break;
+			case 3:
+				point.setLongitude((float) st.nval);
+				break;
+			case 4:
+				point.setLatitude((float) st.nval);
+				field = 0;
+				break;
+			}
+		}
+
+		return list;
+	}
+
 	private GeoPoint csvToPoint(String line) {
 		GeoPoint point = new GeoPoint();
 
@@ -62,15 +110,21 @@ public class USCensusTranslatedCSVFileReader implements DataSourceProvider {
 	 */
 	@Override
 	public List<GeoPoint> read() {
-		InputStream csvStream = getClass().getResourceAsStream(CENSUS_FILENAME);
-		List<GeoPoint> list;
-		try {
-			list = readCSVFile(csvStream);
-		} catch (IOException e) {
-			logger.severe("Error reading " + CENSUS_FILENAME + " file: " + e.getLocalizedMessage());
-			list = new ArrayList<GeoPoint>();
+		Date d1 = new Date();
+		List<GeoPoint> list = null;
+		for (int i = 0; i < 1; i++) {
+			InputStream csvStream = getClass().getResourceAsStream(CENSUS_FILENAME);
+
+			try {
+				// list = readCSVFile(csvStream);
+				list = readCSVUsingStreamTokenizer(csvStream);
+			} catch (IOException e) {
+				logger.severe("Error reading " + CENSUS_FILENAME + " file: " + e.getLocalizedMessage());
+				list = new ArrayList<GeoPoint>();
+			}
 		}
+		Date d2 = new Date();
+		logger.severe("execution time=" + (d2.getTime() - d1.getTime()));
 		return list;
 	}
-
 }
